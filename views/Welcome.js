@@ -1,3 +1,4 @@
+import axios from "axios";
 import * as React from "react";
 import { Text, StyleSheet, View, Image } from "react-native";
 import {
@@ -8,7 +9,9 @@ import {
   Title,
   Colors,
 } from "react-native-paper";
-import { Link } from "react-router-native";
+import { Link, Redirect } from "react-router-native";
+import { attemptLogin, getUser, register, useUser } from "../modules/auth";
+import { DashboardRoute } from "./Dashboard";
 
 const style = StyleSheet.create({
   image: {
@@ -67,11 +70,23 @@ const content = {
 function Welcome() {
   const [registering, setRegistering] = React.useState(true);
 
-  function submitForm(e) {
-    console.log(e);
+  const [name, setName] = React.useState("");
+  const [phone, setPhone] = React.useState("");
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+
+  const currentUser = useUser();
+
+  async function submitForm(e) {
+    if (registering) {
+      register(name, phone, email, password);
+    } else {
+      attemptLogin();
+    }
   }
   return (
     <View style={style.view}>
+      {currentUser && <Redirect to={DashboardRoute} />}
       <Image
         style={style.image}
         source={{
@@ -85,22 +100,35 @@ function Welcome() {
           title={registering ? "Sign up to get started." : "Welcome back!"}
         />
         <Card.Content>
-          {registering && <TextInput style={style.form_input} label="Name" />}
+          {registering && (
+            <TextInput
+              style={style.form_input}
+              value={name}
+              label="Name"
+              onChangeText={(value) => setName(value)}
+            />
+          )}
           <TextInput
             style={style.form_input}
             keyboardType="email-address"
+            value={email}
+            onChangeText={(value) => setEmail(value)}
             label="Email"
           />
           {registering && (
             <TextInput
               keyboardType="phone-pad"
               style={style.form_input}
+              value={phone}
+              onChangeText={(value) => setPhone(value)}
               label="Phone Number"
             />
           )}
           <TextInput
             style={style.form_input}
             secureTextEntry={true}
+            value={password}
+            onChangeText={(value) => setPassword(value)}
             label="Password"
           />
         </Card.Content>
