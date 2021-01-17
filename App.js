@@ -31,11 +31,11 @@ function App() {
     <PaperProvider theme={theme}>
       <NativeRouter>
         <View>
-          <Route path={routes.welcome.path} component={Welcome} />
-          <Route path={routes.register.path} component={Register} />
-          <Route path={routes.login.path} component={Login} />
-          <Route path={routes.resetPassword.path} component={ResetPassword} />
-          <Route path={routes.dashboard.path} component={Dashboard} />
+          <Route path={routes.welcome} component={Welcome} />
+          <Route path={routes.register} component={Register} />
+          <Route path={routes.login} component={Login} />
+          <Route path={routes.resetPassword} component={ResetPassword} />
+          <Route path={routes.dashboard} component={Dashboard} />
         </View>
       </NativeRouter>
     </PaperProvider>

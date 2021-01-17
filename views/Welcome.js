@@ -24,9 +24,9 @@ function Welcome(props) {
   // console.log(location, user);
 
   if (user) {
-    return <Redirect to={dashboard.path} />;
+    return <Redirect to={dashboard} />;
   } else {
-    return <Redirect to={register.path} />;
+    return <Redirect to={register} />;
   }
 }
 

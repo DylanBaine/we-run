@@ -9,18 +9,18 @@ import { attemptLogin, useUser } from "../../modules/auth";
 function Login(props) {
   const user = useUser();
 
-  if (user) {
-    return <Redirect to={dashboard.path} />;
-  }
-
   const [email, setEmail] = useState("dylan.baine@yahoo.com");
   const [password, setPassword] = useState("secret123");
 
   async function submitForm() {
     const response = await attemptLogin(email, password);
     if (response._type === "success") {
-      props.history.replace(dashboard.path);
+      props.history.replace(dashboard);
     }
+  }
+
+  if (user) {
+    return <Redirect to={dashboard} />;
   }
 
   return (
@@ -46,7 +46,7 @@ function Login(props) {
             <Text>Log In</Text>
           </Button>
           <Text>No account? </Text>
-          <Link to={register.path}>
+          <Link to={register}>
             <Text style={{ textDecorationLine: "underline" }}>Register</Text>
           </Link>
         </Card.Actions>

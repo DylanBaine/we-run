@@ -20,7 +20,7 @@ function Register() {
   const user = useUser();
 
   if (user) {
-    return <Redirect to={dashboard.path} />;
+    return <Redirect to={dashboard} />;
   }
 
   return (
@@ -45,7 +45,7 @@ function Register() {
         <Card.Actions>
           <Button style={style.registerButton}>Register</Button>
           <Text>Have an account? </Text>
-          <Link to={login.path}>
+          <Link to={login}>
             <Text style={{ textDecorationLine: "underline" }}>Log In</Text>
           </Link>
         </Card.Actions>
