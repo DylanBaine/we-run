@@ -1,9 +1,19 @@
-import * as React from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { View, Text } from "react-native";
 import { Provider as PaperProvider, DefaultTheme } from "react-native-paper";
-import { NativeRouter, Route, Link } from "react-router-native";
+import {
+  NativeRouter,
+  Route,
+  Link,
+  Redirect,
+  useLocation,
+} from "react-router-native";
+import ResetPassword from "./views/Auth/ResetPassword";
+import Login from "./views/Auth/Login";
+import Register from "./views/Auth/Register";
+import Dashboard from "./views/Dashboard";
 import Welcome from "./views/Welcome";
-import Dashboard, { DashboardRoute } from "./views/Dashboard";
+import * as routes from "./routes";
 
 const theme = {
   ...DefaultTheme,
@@ -16,15 +26,20 @@ const theme = {
   },
 };
 
-export default function App() {
+function App() {
   return (
     <PaperProvider theme={theme}>
       <NativeRouter>
         <View>
-          <Route exact path="/" component={Welcome} />
-          <Route exact path={DashboardRoute} component={Dashboard} />
+          <Route path={routes.welcome.path} component={Welcome} />
+          <Route path={routes.register.path} component={Register} />
+          <Route path={routes.login.path} component={Login} />
+          <Route path={routes.resetPassword.path} component={ResetPassword} />
+          <Route path={routes.dashboard.path} component={Dashboard} />
         </View>
       </NativeRouter>
     </PaperProvider>
   );
 }
+
+export default App;

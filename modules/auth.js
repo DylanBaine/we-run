@@ -1,28 +1,35 @@
 import AsyncStorage from "@react-native-community/async-storage";
 import axios from "axios";
 import { useState, useEffect } from "react";
+import Config from "../config";
 
 const storageKey = "Auth:current-user";
 
 async function setUser(user) {
+  // console.log("setUser", user);
   return await AsyncStorage.setItem(storageKey, JSON.stringify(user));
 }
 
 // const endpoint = "https://we-run.dylanbaine.com/api";
-const endpoint = "http://localhost:8000/api";
+const endpoint = `${Config.apiUrl}/api`;
 export async function attemptLogin(email, password) {
   try {
     const result = await axios
-      .post(`${endpoint}/reginster`, { email, password })
-      .then((res) => res.data);
+      .post(`${endpoint}/login`, { email, password })
+      .then((res) => res.data.data);
     setUser(result);
+    result._type = "success";
+    return result;
   } catch (e) {
+    console.error(e);
     return {
       ...e.response.data,
       _type: "error",
     };
   }
 }
+
+export function resetPassword(email) {}
 
 export async function register(name, phone, email, password) {
   const payload = {
@@ -34,7 +41,7 @@ export async function register(name, phone, email, password) {
   try {
     const result = await axios
       .post(`${endpoint}/register`, payload)
-      .then((res) => res.data);
+      .then((res) => res.data.data);
     setUser(result);
   } catch (e) {
     return {
@@ -45,8 +52,18 @@ export async function register(name, phone, email, password) {
   return;
 }
 
+export async function checkState(user) {
+  const res = await axios
+    .get(`${Config.apiUrl}/api/user`)
+    .then((res) => true)
+    .catch((e) => false);
+  return res;
+}
+
 export async function logout() {
-  await axios.delete(`${endpoint}/tokens`);
+  try {
+    await axios.delete(`${endpoint}/tokens`);
+  } catch (e) {}
   setUser(null);
 }
 
@@ -60,14 +77,19 @@ export async function getUser() {
 }
 
 export function useUser() {
-  const [result, setResult] = useState(null);
+  const [_user, _setUser] = useState(null);
 
   useEffect(() => {
-    (async function () {
-      const _user = await getUser();
-      setResult(_user);
-    })();
+    let mounted = true;
+    getUser().then((_u) => {
+      if (mounted) {
+        _setUser(_u);
+      }
+    });
+    return () => {
+      mounted = false;
+    };
   }, []);
 
-  return result;
+  return _user;
 }
