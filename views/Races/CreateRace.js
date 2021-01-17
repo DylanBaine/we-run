@@ -3,10 +3,10 @@ import { Button, Card, TextInput } from "react-native-paper";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { createRace, updateRace } from "../../modules/races";
 
-function CreateRace() {
-  const [name, setName] = useState(null);
-  const [description, setDescription] = useState(null);
-  const [date, setDate] = useState(new Date(1598051730000));
+function CreateRace(props) {
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [date, setDate] = useState(new Date());
   const [distance, setDistance] = useState({
     number: 5,
     units: "killometers",
@@ -17,22 +17,29 @@ function CreateRace() {
     setDate(newDate);
   }
 
-  function saveButtonClicked() {
-    createRace({
+  async function saveButtonClicked() {
+    await createRace(props.user, {
       name: name,
       description: description,
       start_time: date,
       distance_number: distance.number,
       distance_units: distance.units,
     });
+    props.onRaceCreated();
   }
 
   return (
     <Card>
       <Card.Title title="Create a race." />
       <Card.Content>
-        <TextInput label="Name your race" />
+        <TextInput value={name} onChangeText={setName} label="Name your race" />
+        <TextInput
+          value={description}
+          onChangeText={setDescription}
+          label="Describe your race"
+        />
         <DateTimePicker
+          style={{ marginTop: 20 }}
           value={date}
           mode="datetime"
           onChange={onDateSelected}

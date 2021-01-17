@@ -1,12 +1,8 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Text, View, StyleSheet } from "react-native";
-import { Button } from "react-native-paper";
-import { Redirect } from "react-router-native";
-import Config from "../config";
+import { Button, Colors } from "react-native-paper";
 import { useUser } from "../modules/auth";
-import { useRaces } from "../modules/races";
-import { login } from "../routes";
+import getUserRaces, { useRaces } from "../modules/races";
 import CreateRace from "./Races/CreateRace";
 import Modal from "../components/Modal";
 
@@ -25,18 +21,37 @@ const styles = StyleSheet.create({
 function Dashboard() {
   const user = useUser();
   const [addingRace, setAddingRace] = useState(false);
-  const [races, loadingRaces] = useRaces(user);
+  const [races, setRaces] = useState([]);
+
+  useEffect(() => {
+    if (user) {
+      getRaces();
+    }
+  }, [user]);
+
+  async function getRaces() {
+    setRaces(await getUserRaces(user));
+  }
+
+  function raceCreated() {
+    getRaces();
+    setAddingRace(false);
+  }
 
   return (
     <>
       <Modal visible={addingRace} onDismiss={() => setAddingRace(false)}>
-        <CreateRace />
+        <CreateRace onRaceCreated={raceCreated} user={user} />
       </Modal>
       <View style={styles.container}>
         <Text style={styles.header}>{user && user.name}</Text>
-        <Text style={styles.header__small}>Your Races</Text>
-        <Button onTouchEnd={() => setAddingRace(true)}>Create a race</Button>
-        {races.map((race) => race.name)}
+        <Text style={styles.header__small}>Races you created.</Text>
+        {races.map((race) => (
+          <Text key={race.id}>{race.name} | edit</Text>
+        ))}
+        <Button onTouchEnd={() => setAddingRace(true)} mode="contained">
+          Create a new race
+        </Button>
       </View>
     </>
   );

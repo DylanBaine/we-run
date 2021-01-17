@@ -2,31 +2,17 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import Config from "../config";
 
-export function useRaces(user = false) {
-  const [races, setRaces] = useState([]);
-
-  useEffect(() => {
-    let mounted = true;
-    if (user && mounted) {
-      loadRaces();
-    }
-    return () => (mounted = false);
-  }, []);
-
-  function loadRaces() {
-    console.log("loading races");
-    axios
-      .get(`${Config.apiUrl}/api/races`, {
-        headers: {
-          Authorization: `Bearer ${user.access_token}`,
-        },
-      })
-      .then((res) => {
-        setRaces(res.data.data || []);
-      })
-      .catch((res) => null);
+export default async function getUserRaces(user) {
+  try {
+    const response = await axios.get(`${Config.apiUrl}/api/races`, {
+      headers: {
+        Authorization: `Bearer ${user.access_token}`,
+      },
+    });
+    return response.data.data || [];
+  } catch (e) {
+    return [];
   }
-  return [races, false];
 }
 
 const Race = {
@@ -47,8 +33,17 @@ const RaceWithId = {
  * @param {Race} data the race data
  * @returns {RaceWithId}
  */
-export async function createRace(data) {
-  console.log(data);
+export async function createRace(user, data) {
+  try {
+    const response = await axios.post(`${Config.apiUrl}/api/races`, data, {
+      headers: {
+        Authorization: `Bearer ${user.access_token}`,
+      },
+    });
+    console.log(response.data);
+  } catch (e) {
+    console.warn(e);
+  }
   return RaceWithId;
 }
 
