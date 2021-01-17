@@ -47,9 +47,17 @@ function Dashboard() {
         <Text style={styles.header}>{user && user.name}</Text>
         <Text style={styles.header__small}>Races you created.</Text>
         {races.map((race) => (
-          <Text key={race.id}>{race.name} | edit</Text>
+          <Text key={race.id}>
+            {race.name} | {new Date(race.start_time).toDateString()} | Edit
+          </Text>
         ))}
-        <Button onTouchEnd={() => setAddingRace(true)} mode="contained">
+        <Button
+          style={{ marginTop: 20 }}
+          icon="plus"
+          onTouchEnd={() => setAddingRace(true)}
+          mode="contained"
+          compact
+        >
           Create a new race
         </Button>
       </View>
